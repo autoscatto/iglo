@@ -34,16 +34,14 @@ func ParseMarkdown(r io.Reader) ([]byte, error) {
 		return nil, err
 	}
 
-	echo := exec.Command("echo", string(b))
-	out, err := echo.StdoutPipe()
-	if err != nil {
+    echo := exec.Command("echo", string(b))
+    snowcrash := exec.Command(path, "--format", "json")
+    echoout,err := echo.StdoutPipe()
+    if err != nil {
 		return nil, err
 	}
+    echo.Start()
+    snowcrash.Stdin = echoout
 
-	echo.Start()
-
-	cmd := exec.Command(path, "--format", "json")
-	cmd.Stdin = out
-
-	return cmd.Output()
+    return snowcrash.Output()
 }
